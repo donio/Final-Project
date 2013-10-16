@@ -38,8 +38,6 @@ $(function() {
 
             $('.navbar-brand').click(function() {
                 self.router.navigate('', {trigger: true});
-				$('.menu-create').removeClass('active');
-				$('.menu-list').removeClass('active');
             });
         },
 
@@ -81,6 +79,17 @@ $(function() {
             $('.app-content').html($listTemplate);
             this.loadAllThesis();
         },
+        showView: function(object) {
+           $('.app-content').html(getTemplate('tpl-thesis-view', object));
+           
+           if (typeof(FB) !== 'undefined') {
+            FB.XFBML.parse();
+           } else{
+            console.log(typeof(FB));
+            comment(document, 'script', 'facebook-jssdk');
+           }
+        },
+
         showForm: function(object) {
             if (!object) {
                 object = {};
@@ -91,18 +100,15 @@ $(function() {
 
 
             $('form').unbind('submit').submit(function(ev) {
-				$.get('/api/thesis', self.save);
-				
+                var thesisObject = {};
+                var inputs = $('form').serializeArray();
+                for (var i = 0; i < inputs.length; i++) {
+                    thesisObject[inputs[i].name] = inputs[i].value;
+                }
+                self.save(thesisObject);
                 return false;
             });
-        },
-		showView: function(object) {
-			$('.app-content').html(getTemplate('tpl-thesis-view-item', object));
-			if (typeof(FB) !== 'undefined') {
-				FB.XFBML.parse();
-			}else{
-				fb(document, 'script', 'facebook-jssdk');
-			}
+
         },
         loadAllThesis: function() {
             $.get('/api/thesis', this.displayLoadedList);
@@ -110,44 +116,21 @@ $(function() {
         displayLoadedList: function(list) {
             console.log('response', list);
             //  use tpl-thesis-list-item to render each loaded list and attach it
-			for (var i = 0; i < list.length; i++){
-				$('.thesis-list').append(getTemplate('tpl-thesis-list-item', list[i]));
-			}
-			
-			$('.table tbody tr').click(function (event) {
-				app.router.navigate('thesis-' + $(this).attr('data-id'), {trigger: true});
-				$('.menu-create').removeClass('active');
-				$('.menu-list').removeClass('active');
-			});
+            for (var i = 0; i < list.length; i++) {
+                    $('.thesis-list').append(getTemplate('tpl-thesis-list-item', list[i]));
+            };
+
+            $('tr').click(function (ev){
+                app.router.navigate('thesis-' + $(this).attr('data-id'), {trigger:true});
+
+            })
+
         },
-        save: function(allThesis) {
+        save: function(object) {
             var self = this;
-			
-			var thesisObject = {};
-			var inputs = $('form').serializeArray();
-			for (var i = 0; i < inputs.length; i++) {
-				thesisObject[inputs[i].name] = inputs[i].value;
-			}
-			
-			if (thesisObject.Title.length != 0){
-				var sameThesis = false;
-				
-				for (var i = 0; i < allThesis.length; i++){
-					if (thesisObject.Title == allThesis[i].Title){
-						sameThesis = true;
-						break;
-					}
-				}
-				
-				if (sameThesis){
-					alert("Thesis with this title was already created.");
-				}else{
-					$.post('/api/thesis', thesisObject);
-					alert("Thesis \"" + thesisObject.Title + "\", saved.");
-				}
-			}else{
-				alert("Thesis title entry is blank.");
-			}
+            $.post('api/thesis', object );
+            alert('New project saved.');
+
         }
 
 
@@ -178,7 +161,7 @@ $(function() {
 
        onView: function(id) {
            console.log('thesis id', id);
-		   $.get('api/thesis/' + id, app.showView);
+           $.get('api/thesis/' + id, app.showView );
        },
 
        onCreate: function() {
@@ -194,14 +177,15 @@ $(function() {
        }
 
     });
-	
-	function fb(d, s, id) {
-		var js, fjs = d.getElementsByTagName(s)[0];
-		if (d.getElementById(id)) return;
-		js = d.createElement(s); js.id = id;
-		js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&appId=130478947138367";
-		fjs.parentNode.insertBefore(js, fjs);
-	}
-	
+    function comment(d, s, id) {
+     var js, fjs = d.getElementsByTagName(s)[0];
+     if (d.getElementById(id)) return;
+    js = d.createElement(s); js.id = id;
+    js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&appId=420271138074504";
+    fjs.parentNode.insertBefore(js, fjs);
+    }
+
     app.init();
+
+
 });
