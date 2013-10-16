@@ -1,11 +1,21 @@
 <!doctype html>
 <html>
     <head>
-        <title>Project Title</title>
+        <title>Online Academic Thesis</title>
         <link rel="stylesheet" type="text/css" href="css/bootstrap.css">
         <link rel="stylesheet" type="text/css" href="css/styles.css">
     </head>
     <body>
+
+    <div id="fb-root"></div>
+    <script>(function(d, s, id) {
+      var js, fjs = d.getElementsByTagName(s)[0];
+      if (d.getElementById(id)) return;
+      js = d.createElement(s); js.id = id;
+      js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&appId=527242004024374";
+      fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));</script>
+
         <div class="navbar navbar-inverse navbar-fixed-top">
             <div class="container">
                 <div class="navbar-header">
@@ -14,7 +24,7 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a class="navbar-brand" href="javascript:void(0)">Project Title</a>
+                    <a class="navbar-brand" href="javascript:void(0)">COE Thesis Manager</a>
                 </div>
                 <div class="collapse navbar-collapse">
                     <ul class="nav navbar-nav menu-crud">
@@ -31,7 +41,11 @@
                             </ul>
                         </li>
                     </ul>
-                    <a href='#' class="btn btn-primary btn-login navbar-btn navbar-right">Log in</a>
+                    <a href='#' class="btn btn-primary btn-login navbar-btn navbar-right">Log in</a><form class="navbar-form navbar-right form-search" role="search" _lpchecked="1">
+                        <div class="form-group">
+                          <input type="text" class="form-control search-input" placeholder="Search thesis here..">
+                        </div>
+                      </form>
                     </div>
                 </div>
             </div>
@@ -39,6 +53,10 @@
                 <div class='row app-content'>
                 </div>
             </div>
+        </div>
+
+        <div class="navbar navbar-fixed-bottom" id="footer">
+            <center><p>Copyright PUP 2013-2014</p></center>
         </div>
 
         <!-- scripts -->
@@ -73,10 +91,23 @@
             <tr data-id="{{Id}}">
                 <td>{{Year}}</td>
                 <td>{{Title}}</td>
-                <td><a href='#'>Edit</a></td>
+                <td>
+                    <a href='javascript:void(0)' class='btn-view'>View</a> &nbsp;
+                    <a href='javascript:void(0)' class='btn-edit'>Edit</a> &nbsp;
+                    <a href='javascript:void(0)' class='btn-delete'>Delete</a> &nbsp;
+                </td>
             </tr>
         </script>
 
+        <script id="tpl-thesis-detail" type="text/x-handlebars-template">
+                <h2 id="thesis-title">{{Title}}</h2>
+                <h3 id="thesis-subtitle">{{Subtitle}}</h3>
+                <div class="fb-like" data-href="https://pupcoetm.appspot.com/thesis-{{Id}}" data-colorscheme="light" data-layout="standard" data-action="like" data-show-faces="true" data-send="false"></div>
+                <blockquote id="thesis-description"><b>Year:</b> {{Year}} <br><br> <b>Description:</b> {{Description}}</blockquote>
+                <hr>                
+                <div class="fb-comments" data-href="http://localhost:9080/thesis-{{Id}}" data-colorscheme="light" data-numposts="10" data-width="600"></div>
+                
+        </script>
 
         <script id="tpl-thesis-form" type="text/x-handlebars-template">
             <div class='col-md-7 thesis-form'>
@@ -101,16 +132,18 @@
                     </div>
                     <div class="form-group">
                         <label for="description-input">Description</label>
-                        <textarea id='description-input' name='Description' class="form-control" rows="3">{{Description}}</textarea>
+                        <textarea id='description-input' name='Description' placeholder="Enter description.." class="form-control" rows="3">{{Description}}</textarea>
                     </div>
-                    <button type="submit" class="btn btn-primary">Save</button>
                     {{#if Id}}
-                    <button class="btn btn-default">Delete</button>
+                    <input id='subtitle-input' type="text" style="display:none" name='Id' value='{{Id}}'>
+                    <button class="btn-cancel btn btn-default">Cancel</button>
                     {{/if}}
+                    <button type = "submit" class="btn btn-primary">Save</button>
                 </form>
             </div>
         </script>
 
+        
+
     </body>
 </html>
-
